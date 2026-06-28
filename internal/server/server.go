@@ -12,6 +12,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/egomarker/docker-lazyloader/internal/lifecycle"
 )
@@ -150,9 +151,10 @@ func (s *Server) serveStartingRetry(w http.ResponseWriter, r *http.Request, svc 
 // --- status JSON ---
 
 type statusResponse struct {
-	Host   string `json:"host"`
-	State  string `json:"state"`
-	Detail string `json:"detail,omitempty"`
+	Host                     string `json:"host"`
+	State                    string `json:"state"`
+	Detail                   string `json:"detail,omitempty"`
+	SecondsSinceLastActivity int64  `json:"seconds_since_last_activity"`
 }
 
 func (s *Server) handleStatusJSON(w http.ResponseWriter, r *http.Request) {
@@ -164,10 +166,22 @@ func (s *Server) handleStatusJSON(w http.ResponseWriter, r *http.Request) {
 	snap := svc.Snapshot()
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(statusResponse{
-		Host:   lifecycle.NormalizeHost(r.Host),
-		State:  snap.State.String(),
-		Detail: snap.Detail,
+		Host:                     lifecycle.NormalizeHost(r.Host),
+		State:                    snap.State.String(),
+		Detail:                   snap.Detail,
+		SecondsSinceLastActivity: secondsSinceLastActivity(snap.LastActivity),
 	})
+}
+
+func secondsSinceLastActivity(last time.Time) int64 {
+	if last.IsZero() {
+		return 0
+	}
+	d := time.Since(last)
+	if d < 0 {
+		return 0
+	}
+	return int64(d / time.Second)
 }
 
 // --- SSE events ---

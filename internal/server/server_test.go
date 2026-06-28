@@ -113,7 +113,7 @@ func TestAPIRequestWhileDownGetsRetryable503NotHTML(t *testing.T) {
 	waitFor(t, func() bool { return fc.Starts() == 1 }, 250*time.Millisecond, "compose start was not triggered")
 }
 
-func TestStatusEndpointIsHostScopedAndMinimal(t *testing.T) {
+func TestStatusEndpointIsHostScopedAndIncludesLastActivityAge(t *testing.T) {
 	health := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusServiceUnavailable)
 	}))
@@ -135,8 +135,11 @@ func TestStatusEndpointIsHostScopedAndMinimal(t *testing.T) {
 	if !strings.Contains(body, `"state":"down"`) {
 		t.Fatalf("status body missing state: %q", body)
 	}
-	if strings.Contains(body, "upstream") || strings.Contains(body, "services") || strings.Contains(body, "last_activity") {
-		t.Fatalf("status body should be minimal and host-scoped: %q", body)
+	if !strings.Contains(body, `"seconds_since_last_activity":`) {
+		t.Fatalf("status body missing time-since-last-activity: %q", body)
+	}
+	if strings.Contains(body, "upstream") || strings.Contains(body, "services") || strings.Contains(body, `"last_activity":`) {
+		t.Fatalf("status body should stay host-scoped without extra internals: %q", body)
 	}
 }
 

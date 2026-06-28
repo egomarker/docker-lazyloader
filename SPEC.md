@@ -106,7 +106,7 @@ See `examples/lazyloader.example.yaml`. Keys:
 
 ## Reserved paths (always handled by lazyloader, never proxied)
 
-- `GET /__lazyloader/status` — minimal JSON state for the matched host only
+- `GET /__lazyloader/status` — minimal JSON state for the matched host only, including seconds since last activity
 - `GET /__lazyloader/events` — SSE stream of state changes for the matched host
 - `GET /__lazyloader/waiting` — the waiting page HTML
 
@@ -137,7 +137,7 @@ See `examples/lazyloader.example.yaml`. Keys:
      starts cleanly once the stop completes.
   5. Reboot with `unless-stopped`: stack does **not** auto-start; first request
      brings it up.
-  6. `GET /__lazyloader/status` returns the matched host's minimal state only.
+  6. `GET /__lazyloader/status` returns the matched host's minimal state, including `seconds_since_last_activity`.
 
 ## Definition of done
 

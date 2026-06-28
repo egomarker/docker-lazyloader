@@ -81,7 +81,7 @@ docker compose -f /path/to/immich-app/docker-compose.yml ps
 
 ## Reserved paths (never proxied)
 
-- `GET /__lazyloader/status` — minimal JSON state for the matched host only
+- `GET /__lazyloader/status` — minimal JSON state for the matched host only, including seconds since last activity
 - `GET /__lazyloader/events` — SSE stream of state changes for the matched host
 - `GET /__lazyloader/waiting` — the waiting page HTML
 
