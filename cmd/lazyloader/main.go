@@ -4,6 +4,7 @@ package main
 import (
 	"context"
 	"flag"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -18,12 +19,16 @@ import (
 	"github.com/egomarker/docker-lazyloader/internal/server"
 )
 
-// version is set via -ldflags at build time.
-var version = "dev"
+const version = "0.1.0"
 
 func main() {
+	showVersion := flag.Bool("version", false, "print version and exit")
 	cfgPath := flag.String("config", envOr("LAZYLOADER_CONFIG", defaultConfigPath()), "path to config file")
 	flag.Parse()
+	if *showVersion {
+		fmt.Println(version)
+		return
+	}
 
 	cfg, err := config.Load(*cfgPath)
 	if err != nil {

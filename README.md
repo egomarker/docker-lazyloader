@@ -38,6 +38,12 @@ go install github.com/egomarker/docker-lazyloader/cmd/lazyloader@latest
 # binary lands in $(go env GOPATH)/bin -> copy to ~/bin/lazyloader
 ```
 
+Check the embedded version:
+
+```sh
+./lazyloader --version
+```
+
 ## One-time host setup
 
 1. **Config** — copy and edit:

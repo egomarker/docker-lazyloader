@@ -6,16 +6,13 @@ NATIVE_GOARCH := $(shell go env GOARCH 2>/dev/null || echo arm64)
 BINARY  := lazyloader
 PKG     := github.com/egomarker/docker-lazyloader
 CMD     := ./cmd/lazyloader
-VERSION := $(shell git describe --tags --always --dirty 2>/dev/null || echo dev)
 
 # macOS arm64 (Apple Silicon) by default. Override: make build GOOS=darwin GOARCH=amd64
 GOOS ?= darwin
 GOARCH ?= arm64
 
-LDFLAGS := -X main.version=$(VERSION)
-
 build:
-	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -trimpath -ldflags "$(LDFLAGS)" -o $(BINARY) $(CMD)
+	GOOS=$(GOOS) GOARCH=$(GOARCH) CGO_ENABLED=0 go build -trimpath -o $(BINARY) $(CMD)
 
 # Cross-compile from any host (Linux dev box -> macOS Mac).
 build-mac: build
