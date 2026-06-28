@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  docker-lazyloader launchd agent.
+
+  Install:
+    cp deploy/com.egomarker.lazyloader.plist ~/Library/LaunchAgents/
+    launchctl load -w ~/Library/LaunchAgents/com.egomarker.lazyloader.plist
+
+  Logs:
+    tail -f /tmp/lazyloader.out.log /tmp/lazyloader.err.log
+
+  Reload after binary update:
+    launchctl unload ~/Library/LaunchAgents/com.egomarker.lazyloader.plist
+    launchctl load   ~/Library/LaunchAgents/com.egomarker.lazyloader.plist
+
+  Edit the two paths below (ProgramArguments binary + config) before loading.
+  KeepAlive=true restarts it on crash or reboot.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.egomarker.lazyloader</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/path/to/lazyloader</string>
+        <string>-config</string>
+        <string>/path/to/lazyloader.yaml</string>
+    </array>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <key>StandardOutPath</key>
+    <string>/tmp/lazyloader.out.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/tmp/lazyloader.err.log</string>
+
+    <key>ProcessType</key>
+    <string>Background</string>
+</dict>
+</plist>

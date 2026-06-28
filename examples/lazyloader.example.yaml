@@ -1,0 +1,27 @@
+# docker-lazyloader example configuration.
+# Copy to ~/.config/lazyloader/lazyloader.yaml and edit.
+
+listen: 127.0.0.1:8787          # localhost only; NPM talks to this via host.docker.internal
+docker_bin: docker              # full path also works, e.g. /usr/local/bin/docker
+poll_interval: 5s               # how often the idle watcher ticks
+log_level: info                 # debug | info | warn | error
+
+services:
+  - host: photos.example.com
+    compose_dir: /path/to/immich-app        # dir containing docker-compose.yml
+    # compose_project: immich               # optional -p override; inferred from file's `name:` if omitted
+    upstream: http://127.0.0.1:2283         # published host port we reverse-proxy to
+    health: http://127.0.0.1:2283/api/server/ping   # Immich ping -> {"res":"pong"}
+    health_expect_status: 200                # require an explicit 200 from the ping endpoint
+    health_expect_body: pong                 # optionally require a response-body substring
+    idle_timeout: 1h                         # stop after this with no traffic
+    min_uptime: 2m                           # anti-flap: never idle-stop before this
+    health_timeout: 10s                      # per-probe timeout
+    start_timeout: 3m                        # give up bringing it up after this
+
+  # Add more hosts the same way:
+  # - host: another.example.com
+  #   compose_dir: /srv/another
+  #   upstream: http://127.0.0.1:9000
+  #   health: http://127.0.0.1:9000/healthz
+  #   idle_timeout: 30m

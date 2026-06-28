@@ -1,0 +1,12 @@
+# Binaries
+/lazyloader
+/dist/
+
+# OS / editor
+.DS_Store
+*.swp
+.idea/
+.vscode/
+
+# Local config (keep example)
+*.local.yaml
